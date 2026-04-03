@@ -59,11 +59,14 @@ bootstrap-sigrok = { cmd = ["bash", "scripts/pixi/bootstrap-sigrok.sh"] }
 configure = [{ task = "configure-debug" }]
 build = [{ task = "build-debug" }]
 test = [{ task = "test-debug" }]
+pulseview = [{ task = "pulseview-debug" }]
 
 build-debug = { cmd = ["cmake", "--build", "build/debug"], depends-on = ["configure-debug"] }
 build-release = { cmd = ["cmake", "--build", "build/release"], depends-on = ["configure-release"] }
 test-debug = { cmd = ["ctest", "--test-dir", "build/debug", "--output-on-failure"], depends-on = ["build-debug"] }
 test-release = { cmd = ["ctest", "--test-dir", "build/release", "--output-on-failure"], depends-on = ["build-release"] }
+pulseview-debug = { cmd = ["./build/debug/pulseview"], env = { SIGROK_FIRMWARE_DIR = ".pixi/external/default/share/sigrok-firmware" } }
+pulseview-release = { cmd = ["./build/release/pulseview"], env = { SIGROK_FIRMWARE_DIR = ".pixi/external/default/share/sigrok-firmware" } }
 
 [feature.docs.tasks]
 manual = { cmd = ["cmake", "--build", "build/debug", "--target", "manual"], depends-on = ["configure"] }

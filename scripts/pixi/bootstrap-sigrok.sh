@@ -14,6 +14,20 @@ LIBSERIALPORT_VERSION="${LIBSERIALPORT_VERSION:-0.1.1}"
 LIBSIGROKDECODE_REF="${LIBSIGROKDECODE_REF:-71f4514}"
 LIBSIGROKDECODE_GIT_URL="${LIBSIGROKDECODE_GIT_URL:-git://sigrok.org/libsigrokdecode}"
 LIBSIGROK_VERSION="${LIBSIGROK_VERSION:-0.5.2}"
+SIGROK_FIRMWARE_FX2LAFW_VERSION="${SIGROK_FIRMWARE_FX2LAFW_VERSION:-0.1.7}"
+
+install_fx2lafw_firmware() {
+    local firmware_dir="${SIGROK_PREFIX}/share/sigrok-firmware"
+    local bundle_dir
+
+    bundle_dir="$(download_and_unpack \
+        "sigrok-firmware-fx2lafw-bin" \
+        "${SIGROK_FIRMWARE_FX2LAFW_VERSION}" \
+        "https://sigrok.org/download/binary/sigrok-firmware-fx2lafw/sigrok-firmware-fx2lafw-bin-${SIGROK_FIRMWARE_FX2LAFW_VERSION}.tar.gz")"
+
+    mkdir -p "${firmware_dir}"
+    cp -f "${bundle_dir}"/*.fw "${firmware_dir}/"
+}
 
 libsigrokdecode_supports_logic_output() {
     local header="${SIGROK_PREFIX}/include/libsigrokdecode/libsigrokdecode.h"
@@ -25,6 +39,10 @@ if ! pkg-config --exists libserialport; then
         "libserialport" \
         "${LIBSERIALPORT_VERSION}" \
         "https://sigrok.org/download/source/libserialport/libserialport-${LIBSERIALPORT_VERSION}.tar.gz"
+fi
+
+if [[ ! -f "${SIGROK_PREFIX}/share/sigrok-firmware/fx2lafw-saleae-logic.fw" ]]; then
+    install_fx2lafw_firmware
 fi
 
 if ! pkg-config --exists libsigrokdecode || ! libsigrokdecode_supports_logic_output; then
