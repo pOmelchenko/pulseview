@@ -29,6 +29,22 @@ install_fx2lafw_firmware() {
     cp -f "${bundle_dir}"/*.fw "${firmware_dir}/"
 }
 
+prune_stale_libsigrokdecode_decoders() {
+    local source_decoders_dir="${SIGROK_SOURCE_ROOT}/libsigrokdecode-git/decoders"
+    local installed_decoders_dir="${SIGROK_PREFIX}/share/libsigrokdecode/decoders"
+    local installed_decoder_dir
+    local decoder_name
+
+    [[ -d "${source_decoders_dir}" && -d "${installed_decoders_dir}" ]] || return
+
+    while IFS= read -r -d '' installed_decoder_dir; do
+        decoder_name="${installed_decoder_dir##*/}"
+        if [[ ! -d "${source_decoders_dir}/${decoder_name}" ]]; then
+            rm -rf "${installed_decoder_dir}"
+        fi
+    done < <(find "${installed_decoders_dir}" -mindepth 1 -maxdepth 1 -type d -print0)
+}
+
 libsigrokdecode_supports_logic_output() {
     local header="${SIGROK_PREFIX}/include/libsigrokdecode/libsigrokdecode.h"
     [[ -f "${header}" ]] && grep -q "SRD_OUTPUT_LOGIC" "${header}"
@@ -64,6 +80,8 @@ if ! pkg-config --exists libsigrokdecode || ! libsigrokdecode_supports_logic_out
     unset LIBSIGROKDECODE_CFLAGS
     unset LIBSIGROKDECODE_LIBS
 fi
+
+prune_stale_libsigrokdecode_decoders
 
 if ! pkg-config --exists libsigrokcxx; then
     build_autotools_project \
