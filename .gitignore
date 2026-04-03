@@ -56,6 +56,7 @@ android/src/org/kde/
 
 doxy
 build/
+.pixi/
 
 contrib/pulseview_cross.nsi
 cmake_install.cmake

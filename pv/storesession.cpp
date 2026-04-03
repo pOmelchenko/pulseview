@@ -21,6 +21,8 @@
 
 #include "storesession.hpp"
 
+#include <glibmm/timeval.h>
+
 #include <QSettings>
 
 #include <pv/data/analog.hpp>
@@ -185,7 +187,11 @@ bool StoreSession::start()
 				any_segment->samplerate())}});
 		output_->receive(meta);
 
-		auto header = context->create_header_packet(session_.get_acquisition_start_time());
+		Glib::TimeVal acquisition_start;
+		if (!session_.get_acquisition_start_time().to_timeval(acquisition_start))
+			acquisition_start.assign_current_time();
+
+		auto header = context->create_header_packet(acquisition_start);
 		output_->receive(header);
 	} catch (Error& error) {
 		error_ = tr("Error while saving: ") + error.what();
