@@ -105,14 +105,14 @@ sync_git_source() {
     local source_dir="${SIGROK_SOURCE_ROOT}/${name}-git"
 
     if [[ ! -d "${source_dir}/.git" ]]; then
-        git clone "${url}" "${source_dir}"
+        git clone "${url}" "${source_dir}" >&2
     else
         git -C "${source_dir}" remote set-url origin "${url}"
     fi
 
-    git -C "${source_dir}" fetch --tags origin
-    git -C "${source_dir}" checkout --force "${ref}"
-    git -C "${source_dir}" clean -fdx
+    git -C "${source_dir}" fetch --tags origin >&2
+    git -C "${source_dir}" checkout --force "${ref}" >&2
+    git -C "${source_dir}" clean -fdx >&2
 
     printf '%s\n' "${source_dir}"
 }
