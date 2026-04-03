@@ -1,8 +1,9 @@
 <RCC>
 	<qresource prefix="/">
-		<file>l10n/de.qm</file>
-		<file>l10n/es_MX.qm</file>
+		<file>l10n/de_de.qm</file>
+		<file>l10n/es_mx.qm</file>
 		<file>l10n/ja_jp.qm</file>
+		<file>l10n/ru_ru.qm</file>
 		<file>l10n/zh_cn.qm</file>
 	</qresource>
 </RCC>
